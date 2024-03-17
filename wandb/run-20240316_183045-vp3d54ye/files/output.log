@@ -1,9 +1,0 @@
-
-2024-03-16 18:30:51,918	INFO worker.py:1724 -- Started a local Ray instance.
- Retrying in 1 seconds
- Retrying in 1 seconds
-/home/sandaruvi/Applications/anaconda3/envs/marl_sumo_simulation/lib/python3.10/site-packages/pettingzoo/utils/conversions.py:132: UserWarning: The base environment `sumo_rl_v0` does not have a `render_mode` defined.
-  warnings.warn(
-/home/sandaruvi/Applications/anaconda3/envs/marl_sumo_simulation/lib/python3.10/site-packages/pettingzoo/utils/conversions.py:144: UserWarning: The `observation_spaces` dictionary is deprecated. Use the `observation_space` function instead.
-  warnings.warn(
-/home/sandaruvi/Applications/anaconda3/envs/marl_sumo_simulation/lib/python3.10/site-packages/pettingzoo/utils/conversions.py:158: UserWarning: The `action_spaces` dictionary is deprecated. Use the `action_space` function instead.
