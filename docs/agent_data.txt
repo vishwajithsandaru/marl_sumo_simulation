@@ -1,0 +1,114 @@
+{
+       'id': 'delkanda_w_jnct', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'delkanda_w_jnct': array([0.07224107, 0.02679287, 0.6663693 , 0.6226892 ], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'delkanda_w_jnct': 0}
+}
+{
+       'id': 'delkanda_e2_jnct', 'obs_space': Box(0.0, 1.0, (4,), float32),
+       'sample_obs': {'delkanda_e2_jnct': array([0.17144077, 0.16784361, 0.3656772 , 0.56941557], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'delkanda_e2_jnct': 0}
+}
+{
+       'id': 'pepiliyana_e_jnct', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'pepiliyana_e_jnct': array([0.68777657, 0.9199389 , 0.25622526, 0.96742296], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'pepiliyana_e_jnct': 0}
+}
+{
+       'id': 'gamsaba_jnct', 
+       'obs_space': Box(0.0, 1.0, (17,), float32), 
+       'sample_obs': {'gamsaba_jnct': array([0.53255606, 0.5592561 , 0.49258178, 0.9179241 , 0.50408936, 0.72401524, 0.5567519 , 0.41376248,0.08375941,0.35603988, 0.75027853, 0.88586956, 0.01291276, 0.48201212, 0.14819752, 0.42563665, 0.8963036 ], dtype=float32)}, 
+       'action_space': Discrete(4), 
+       'action_space_sample': {'gamsaba_jnct': 3}
+}
+{
+       'id': 'raththanpitiya_jnct_n4', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'raththanpitiya_jnct_n4': array([0.47068024, 0.27174938, 0.10318661, 0.70661557], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'raththanpitiya_jnct_n4': 0}
+}
+{
+       'id': 'pepiliyana_jnct', 
+       'obs_space': Box(0.0, 1.0, (21,), float32), 
+       'sample_obs': {'pepiliyana_jnct': array([9.0184607e-02, 1.7711864e-01, 5.7718188e-01, 8.7651896e-01,
+              6.1284167e-01, 8.9537764e-01, 9.6153325e-01, 8.7533015e-01,
+              4.1931576e-01, 8.3032167e-01, 5.2029092e-04, 5.7104367e-01,
+              4.0588593e-01, 3.2660222e-01, 9.1133428e-01, 3.7198558e-01,
+              3.1396601e-01, 6.7976201e-01, 3.8580120e-01, 9.8341274e-01,
+              1.0861057e-01], dtype=float32)}, 
+       'action_space': Discrete(4), 
+       'action_space_sample': {'pepiliyana_jnct': 3}
+}
+{
+       'id': 'pepiliyana_s1_jnct', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'pepiliyana_s1_jnct': array([0.6264305 , 0.9550405 , 0.55033195, 0.8999471 ], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'pepiliyana_s1_jnct': 0}
+}
+{
+       'id': 'raththanpitiya_jnct_s', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'raththanpitiya_jnct_s': array([0.24392158, 0.41127887, 0.98265386, 0.16235112], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'raththanpitiya_jnct_s': 0}
+}
+{
+       'id': 'raththanpitiya_jnct', 
+       'obs_space': Box(0.0, 1.0, (11,), float32), 
+       'sample_obs': {'raththanpitiya_jnct': array([0.4604493 , 0.13503708, 0.7456085 , 0.4999427 , 0.06628317,
+              0.13164593, 0.16693078, 0.30048195, 0.39908138, 0.6676655 ,
+              0.92236346], dtype=float32)}, 
+       'action_space': Discrete(2), 
+       'action_space_sample': {'raththanpitiya_jnct': 0}
+}
+{
+       'id': 'pepiliyana_n2_jnct', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'pepiliyana_n2_jnct': array([0.11808992, 0.06654102, 0.94450706, 0.55562955], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'pepiliyana_n2_jnct': 0}
+}
+{
+       'id': 'gamsaba_s_jnct', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'gamsaba_s_jnct': array([0.9493743, 0.9341454, 0.9204694, 0.4643674], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'gamsaba_s_jnct': 0}
+}
+{
+       'id': 'gamsaba_w1_jnct', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'gamsaba_w1_jnct': array([0.612564  , 0.6960081 , 0.68158495, 0.8322621 ], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'gamsaba_w1_jnct': 0}
+}
+{
+       'id': 'delkanda_n2_jnct', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'delkanda_n2_jnct': array([0.80318826, 0.9128698 , 0.56404775, 0.4847398 ], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'delkanda_n2_jnct': 0}
+}
+{
+       'id': 'delkanda_jnct', 
+       'obs_space': Box(0.0, 1.0, (17,), float32), 
+       'sample_obs': {'delkanda_jnct': array([0.97026706, 0.17750987, 0.09977777, 0.15411286, 0.64059204,
+              0.9397598 , 0.501899  , 0.48188254, 0.8131326 , 0.11502389,
+              0.00296835, 0.41904923, 0.53793555, 0.5622823 , 0.2989143 ,
+              0.5367493 , 0.81570625], dtype=float32)}, 
+       'action_space': Discrete(4), 
+       'action_space_sample': {'delkanda_jnct': 3}
+}
+{
+       'id': 'pepiliyana_w_jnct', 
+       'obs_space': Box(0.0, 1.0, (4,), float32), 
+       'sample_obs': {'pepiliyana_w_jnct': array([0.15072832, 0.8417543 , 0.9913622 , 0.29306084], dtype=float32)}, 
+       'action_space': Discrete(1), 
+       'action_space_sample': {'pepiliyana_w_jnct': 0}
+}

@@ -1,0 +1,26 @@
+2024-03-16 18:20:18,607 INFO    MainThread:308479 [wandb_setup.py:_flush():76] Current SDK version is 0.16.4
+2024-03-16 18:20:18,607 INFO    MainThread:308479 [wandb_setup.py:_flush():76] Configure stats pid to 308479
+2024-03-16 18:20:18,607 INFO    MainThread:308479 [wandb_setup.py:_flush():76] Loading settings from /home/sandaruvi/.config/wandb/settings
+2024-03-16 18:20:18,608 INFO    MainThread:308479 [wandb_setup.py:_flush():76] Loading settings from /home/sandaruvi/Workspace/Playground/marl_sumo_simulation/wandb/settings
+2024-03-16 18:20:18,608 INFO    MainThread:308479 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2024-03-16 18:20:18,608 INFO    MainThread:308479 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'marl.py', 'program_abspath': '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/marl.py', 'program': '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/marl.py'}
+2024-03-16 18:20:18,608 INFO    MainThread:308479 [wandb_setup.py:_flush():76] Applying login settings: {'api_key': '***REDACTED***'}
+2024-03-16 18:20:18,608 INFO    MainThread:308479 [wandb_init.py:_log_setup():526] Logging user logs to /home/sandaruvi/Workspace/Playground/marl_sumo_simulation/wandb/run-20240316_182018-3crbrz12/logs/debug.log
+2024-03-16 18:20:18,609 INFO    MainThread:308479 [wandb_init.py:_log_setup():527] Logging internal logs to /home/sandaruvi/Workspace/Playground/marl_sumo_simulation/wandb/run-20240316_182018-3crbrz12/logs/debug-internal.log
+2024-03-16 18:20:18,609 INFO    MainThread:308479 [wandb_init.py:init():566] calling init triggers
+2024-03-16 18:20:18,609 INFO    MainThread:308479 [wandb_init.py:init():573] wandb.init called with sweep_config: {}
+config: {}
+2024-03-16 18:20:18,610 INFO    MainThread:308479 [wandb_init.py:init():616] starting backend
+2024-03-16 18:20:18,610 INFO    MainThread:308479 [wandb_init.py:init():620] setting up manager
+2024-03-16 18:20:18,615 INFO    MainThread:308479 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-03-16 18:20:18,619 INFO    MainThread:308479 [wandb_init.py:init():628] backend started and connected
+2024-03-16 18:20:18,625 INFO    MainThread:308479 [wandb_init.py:init():720] updated telemetry
+2024-03-16 18:20:18,627 INFO    MainThread:308479 [wandb_init.py:init():753] communicating run to backend with 90.0 second timeout
+2024-03-16 18:20:19,607 INFO    MainThread:308479 [wandb_run.py:_on_init():2262] communicating current version
+2024-03-16 18:20:20,212 INFO    MainThread:308479 [wandb_run.py:_on_init():2271] got version response 
+2024-03-16 18:20:20,212 INFO    MainThread:308479 [wandb_init.py:init():804] starting run threads in backend
+2024-03-16 18:20:22,977 INFO    MainThread:308479 [wandb_run.py:_console_start():2241] atexit reg
+2024-03-16 18:20:22,978 INFO    MainThread:308479 [wandb_run.py:_redirect():2096] redirect: wrap_raw
+2024-03-16 18:20:22,978 INFO    MainThread:308479 [wandb_run.py:_redirect():2161] Wrapping output streams.
+2024-03-16 18:20:22,978 INFO    MainThread:308479 [wandb_run.py:_redirect():2186] Redirects installed.
+2024-03-16 18:20:22,979 INFO    MainThread:308479 [wandb_init.py:init():847] run started, returning control to user process

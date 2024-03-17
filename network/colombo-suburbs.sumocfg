@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-03-15 23:55:46 by Eclipse SUMO sumo Version 1.19.0
+-->
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="colombo-suburbs.net.xml"/>
+        <route-files value="colombo-suburbs.rou.xml"/>
+    </input>
+
+    <processing>
+        <lateral-resolution value="0.3"/>
+    </processing>
+
+</configuration>

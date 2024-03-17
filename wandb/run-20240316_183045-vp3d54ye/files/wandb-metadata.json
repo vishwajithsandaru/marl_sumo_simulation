@@ -1,0 +1,74 @@
+{
+    "os": "Linux-6.5.0-25-generic-x86_64-with-glibc2.35",
+    "python": "3.10.0",
+    "heartbeatAt": "2024-03-16T13:00:46.333890",
+    "startedAt": "2024-03-16T13:00:45.085687",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/marl.py",
+    "codePathLocal": "marl.py",
+    "codePath": "marl.py",
+    "host": "LOIT-SE40",
+    "username": "sandaruvi",
+    "executable": "/home/sandaruvi/Applications/anaconda3/envs/marl_sumo_simulation/bin/python",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 3242.9242500000005,
+        "min": 400.0,
+        "max": 3900.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3202.69,
+            "min": 400.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3199.457,
+            "min": 400.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3199.999,
+            "min": 400.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3200.974,
+            "min": 400.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3203.448,
+            "min": 400.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3199.984,
+            "min": 400.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3199.996,
+            "min": 400.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3199.978,
+            "min": 400.0,
+            "max": 3900.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 182.2811393737793,
+            "used": 40.389156341552734
+        }
+    },
+    "memory": {
+        "total": 15.491718292236328
+    }
+}
