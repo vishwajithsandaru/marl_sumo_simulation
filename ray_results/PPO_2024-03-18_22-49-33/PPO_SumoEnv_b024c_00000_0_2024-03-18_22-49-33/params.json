@@ -1,0 +1,104 @@
+{
+  "env": "SumoEnv",
+  "framework": "torch",
+  "horizon": 1500,
+  "multiagent": {
+    "policies": {
+      "delkanda_e2_jnct": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "delkanda_jnct": [
+        null,
+        "Box(0.0, 1.0, (17,), float32)",
+        "Discrete(4)",
+        {}
+      ],
+      "delkanda_n2_jnct": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "delkanda_w_jnct": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "gamsaba_jnct": [
+        null,
+        "Box(0.0, 1.0, (17,), float32)",
+        "Discrete(4)",
+        {}
+      ],
+      "gamsaba_s_jnct": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "gamsaba_w1_jnct": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "pepiliyana_e_jnct": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "pepiliyana_jnct": [
+        null,
+        "Box(0.0, 1.0, (21,), float32)",
+        "Discrete(4)",
+        {}
+      ],
+      "pepiliyana_n2_jnct": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "pepiliyana_s1_jnct": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "pepiliyana_w_jnct": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "raththanpitiya_jnct": [
+        null,
+        "Box(0.0, 1.0, (11,), float32)",
+        "Discrete(2)",
+        {}
+      ],
+      "raththanpitiya_jnct_n4": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ],
+      "raththanpitiya_jnct_s": [
+        null,
+        "Box(0.0, 1.0, (4,), float32)",
+        "Discrete(1)",
+        {}
+      ]
+    },
+    "policy_mapping_fn": "<function policy_mapping at 0x7856897cb400>"
+  },
+  "num_cpus_per_worker": 1,
+  "num_workers": 1,
+  "resources_per_trial": 2,
+  "soft_horizon": false
+}

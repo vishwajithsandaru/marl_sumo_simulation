@@ -5,22 +5,15 @@ import wandb
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray import tune
 from ray.tune.registry import register_env
-from ray.rllib.env import PettingZooEnv
-# from torchrl.envs.libs.pettingzoo import PettingZooWrapper
+from ray.rllib.algorithms.ppo import PPO
 
 net_file = './network/colombo-suburbs.net.xml'
 route_file = './network/colombo-suburbs.rou.xml'
 sumo_cfg_file = './network/colombo-suburbs.net.xml'
 ray_results_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results'
+checkpoint_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results/PPO_2024-03-18_22-49-33/PPO_SumoEnv_b024c_00000_0_2024-03-18_22-49-33/checkpoint_000000'
 use_gui = False
 num_seconds = 2000
-
-wandb.login()
-wandb.tensorboard.patch(root_logdir="./ray_results")
-
-wandb.init(
-    project="sumo_petting_zoo_rllib",
-)
 
 ray.shutdown()
 ray.init()
@@ -47,18 +40,13 @@ def custom_policy_fn(env_pz: ParallelPettingZooEnv,  agent_id):
 def policy_mapping(agent_id, episode, worker, **kwards):
     return agent_id
 
+
 env_pz = ParallelPettingZooEnv(sumo_rl.parallel_env(
             net_file=net_file,
             route_file=route_file,
             use_gui=use_gui,
-            num_seconds=num_seconds))
-
-def env_creator(config):
-    return env_pz
-
-register_env("SumoEnv", lambda config: env_creator(config))
-
-env_pz.close()
+            num_seconds=num_seconds,
+            render_mode='human'))
 
 agents = [a for a in env_pz.get_agent_ids()]
 
@@ -76,16 +64,42 @@ config = {
     "resources_per_trial": 2,
     "num_workers": 1,
     "horizon": 1500,
-    "soft_horizon": False
+    "soft_horizon": False,
+    "evaluation_interval": 1
 }
 
-results = tune.run(
-    "PPO",
-    config=config,
-    stop={"timesteps_total": 10000},
-    checkpoint_at_end=True,
-    local_dir=ray_results_path,
-)
+def env_creator(config):
+    return env_pz
 
-wandb.finish()
+register_env("SumoEnv", lambda config: env_creator(config))
+
+policy = PPO(config=config)
+policy.restore(checkpoint_path)
+
+env_pz.close()
+
+trained_agents = {}
+
+for agent in agents:
+    trained_agents[agent] = policy.get_policy(agent)
+
+def gen_env_action_dict(agent_actions):
+    action_dict = {}
+    for agent in agents:
+        action_dict[agent] = agent_actions[agent][0]
+    return action_dict
+
+
+# obs = env_pz.reset()[0]
+
+# for i in range(num_seconds):
+#     actions = {}
+#     for agent in agents:
+#         _obs = obs[agent]
+#         actions[agent] = trained_agents[agent].compute_single_action(_obs)
+#     action_dict = gen_env_action_dict(actions)
+#     obs, rews, terminateds, truncateds, infos = env_pz.step(action_dict)
+#     print(f'Time Steps: {i}', end='\r')
+
+# print('Evaluation terminated successfully!\n')
     
