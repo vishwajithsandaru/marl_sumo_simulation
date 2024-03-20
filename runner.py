@@ -67,12 +67,6 @@ def get_system_info():
         
 
     return {
-        # 'system_total_stopped_mc': sum(int(speed_mc < 0.1) for speed_mc in speeds_mc),
-        # 'system_total_stopped_mb': sum(int(speed_mb < 0.1) for speed_mb in speeds_mb),
-        # 'system_total_waiting_time_mc': sum(waiting_times_mc),
-        # 'system_total_waiting_time_mb': sum(waiting_times_mb),
-        # 'system_mean_speed_mc': 0.0 if len(vehicles) == 0 else np.mean(speeds_mc),
-        # 'system_mean_speed_mb': 0.0 if len(vehicles) == 0 else np.mean(speeds_mb)
         'system_mean_waiting_time_mc': 0.0 if len(waiting_times_mc) == 0 else np.mean(waiting_times_mc),
         'system_mean_waiting_time_mb': 0.0 if len(waiting_times_mb) == 0 else np.mean(waiting_times_mb)
     }

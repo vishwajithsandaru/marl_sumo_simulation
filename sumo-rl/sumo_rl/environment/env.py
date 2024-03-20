@@ -399,16 +399,33 @@ class SumoEnvironment(gym.Env):
     def _sumo_step(self):
         self.sumo.simulationStep()
 
+    # def _get_system_info(self):
+    #     vehicles = self.sumo.vehicle.getIDList()
+    #     speeds = [self.sumo.vehicle.getSpeed(vehicle) for vehicle in vehicles]
+    #     waiting_times = [self.sumo.vehicle.getWaitingTime(vehicle) for vehicle in vehicles]
+    #     return {
+    #         # In SUMO, a vehicle is considered halting if its speed is below 0.1 m/s
+    #         "system_total_stopped": sum(int(speed < 0.1) for speed in speeds),
+    #         "system_total_waiting_time": sum(waiting_times),
+    #         "system_mean_waiting_time": 0.0 if len(vehicles) == 0 else np.mean(waiting_times),
+    #         "system_mean_speed": 0.0 if len(vehicles) == 0 else np.mean(speeds),
+    #     }
+    
     def _get_system_info(self):
         vehicles = self.sumo.vehicle.getIDList()
-        speeds = [self.sumo.vehicle.getSpeed(vehicle) for vehicle in vehicles]
-        waiting_times = [self.sumo.vehicle.getWaitingTime(vehicle) for vehicle in vehicles]
+        waiting_times_mc = [] 
+        waiting_times_mb = []
+
+        for vehicle in vehicles:
+            if traci.vehicle.getTypeID(vehicle) == 'motorcar':
+                waiting_times_mc.append(traci.vehicle.getWaitingTime(vehicle))
+            else:
+                waiting_times_mb.append(traci.vehicle.getWaitingTime(vehicle))
+            
+
         return {
-            # In SUMO, a vehicle is considered halting if its speed is below 0.1 m/s
-            "system_total_stopped": sum(int(speed < 0.1) for speed in speeds),
-            "system_total_waiting_time": sum(waiting_times),
-            "system_mean_waiting_time": 0.0 if len(vehicles) == 0 else np.mean(waiting_times),
-            "system_mean_speed": 0.0 if len(vehicles) == 0 else np.mean(speeds),
+            'system_mean_waiting_time_mc': 0.0 if len(waiting_times_mc) == 0 else np.mean(waiting_times_mc),
+            'system_mean_waiting_time_mb': 0.0 if len(waiting_times_mb) == 0 else np.mean(waiting_times_mb)
         }
 
     def _get_per_agent_info(self):

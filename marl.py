@@ -12,8 +12,8 @@ net_file = './network/colombo-suburbs.net.xml'
 route_file = './network/colombo-suburbs.rou.xml'
 sumo_cfg_file = './network/colombo-suburbs.net.xml'
 ray_results_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results'
-use_gui = False
-num_seconds = 2000
+use_gui = True
+num_seconds = 10000
 
 wandb.login()
 wandb.tensorboard.patch(root_logdir="./ray_results")
@@ -75,17 +75,18 @@ config = {
     "num_cpus_per_worker": 1,
     "resources_per_trial": 2,
     "num_workers": 1,
-    "horizon": 1500,
+    "horizon": 2000,
     "soft_horizon": False
 }
 
 results = tune.run(
     "PPO",
     config=config,
-    stop={"timesteps_total": 10000},
+    stop={"timesteps_total": 500000},
     checkpoint_at_end=True,
     local_dir=ray_results_path,
 )
+
 
 wandb.finish()
     

@@ -13,7 +13,8 @@ sumo_cfg_file = './network/colombo-suburbs.net.xml'
 ray_results_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results'
 checkpoint_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results/PPO_2024-03-18_22-49-33/PPO_SumoEnv_b024c_00000_0_2024-03-18_22-49-33/checkpoint_000000'
 use_gui = False
-num_seconds = 2000
+num_seconds = 5005
+out_csv_name='./output/marl/info'
 
 ray.shutdown()
 ray.init()
@@ -46,7 +47,10 @@ env_pz = ParallelPettingZooEnv(sumo_rl.parallel_env(
             route_file=route_file,
             use_gui=use_gui,
             num_seconds=num_seconds,
-            render_mode='human'))
+            render_mode='human',
+            add_per_agent_info=False,
+            add_system_info=True,
+            out_csv_name=out_csv_name))
 
 agents = [a for a in env_pz.get_agent_ids()]
 
@@ -76,8 +80,6 @@ register_env("SumoEnv", lambda config: env_creator(config))
 policy = PPO(config=config)
 policy.restore(checkpoint_path)
 
-env_pz.close()
-
 trained_agents = {}
 
 for agent in agents:
@@ -90,16 +92,18 @@ def gen_env_action_dict(agent_actions):
     return action_dict
 
 
-# obs = env_pz.reset()[0]
+obs = env_pz.reset()[0]
 
-# for i in range(num_seconds):
-#     actions = {}
-#     for agent in agents:
-#         _obs = obs[agent]
-#         actions[agent] = trained_agents[agent].compute_single_action(_obs)
-#     action_dict = gen_env_action_dict(actions)
-#     obs, rews, terminateds, truncateds, infos = env_pz.step(action_dict)
-#     print(f'Time Steps: {i}', end='\r')
+for i in range(1000):
+    actions = {}
+    for agent in agents:
+        _obs = obs[agent]
+        actions[agent] = trained_agents[agent].compute_single_action(_obs)
+    action_dict = gen_env_action_dict(actions)
+    obs, rews, terminateds, truncateds, infos = env_pz.step(action_dict)
+    print(f'Time Steps: {i}', end='\r')
 
-# print('Evaluation terminated successfully!\n')
+env_pz.reset();
+
+print('Evaluation terminated successfully!\n')
     
