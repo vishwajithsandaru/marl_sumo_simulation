@@ -27,7 +27,7 @@ def start():
     sumo_cmd = ""
 
     if not gui:
-        sumo_cmd = ['sumo', '-n', net_file, '-r', route_file, '--lateral-resolution', lateral_resolution]
+        sumo_cmd = ['sumo', '-n', net_file, '-r', route_file, '--lateral-resolution', lateral_resolution, '--waiting-time-memory', '1000']
     else:
         sumo_binary = sumolib.checkBinary('sumo-gui')
         sumo_cmd = [sumo_binary, '-c', sumocfg_file]
@@ -38,11 +38,13 @@ def start():
         traci.simulationStep()
 
         # Getting system info
-        info = {'step': traci.simulation.getTime()}
-        info.update(get_system_info())
 
-        metrics.append(info.copy())
-        print(f'Current Step: {traci.simulation.getTime()}', end='\r')
+        if(time_step % 5 == 0):
+            info = {'step': traci.simulation.getTime()}
+            info.update(get_system_info())
+
+            metrics.append(info.copy())
+            print(f'Current Step: {traci.simulation.getTime()}', end='\r')
 
     df = pd.DataFrame(metrics)
     Path(Path(output_csv).parent).mkdir(parents=True, exist_ok=True)

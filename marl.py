@@ -6,13 +6,14 @@ from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray import tune
 from ray.tune.registry import register_env
 from ray.rllib.env import PettingZooEnv
+from reward import custom_waiting_time_reward
 # from torchrl.envs.libs.pettingzoo import PettingZooWrapper
 
 net_file = './network/colombo-suburbs.net.xml'
 route_file = './network/colombo-suburbs.rou.xml'
 sumo_cfg_file = './network/colombo-suburbs.net.xml'
 ray_results_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results'
-use_gui = True
+use_gui = False
 num_seconds = 10000
 
 wandb.login()
@@ -51,7 +52,10 @@ env_pz = ParallelPettingZooEnv(sumo_rl.parallel_env(
             net_file=net_file,
             route_file=route_file,
             use_gui=use_gui,
-            num_seconds=num_seconds))
+            num_seconds=num_seconds,
+            reward_fn=custom_waiting_time_reward,
+            time_to_teleport=500,
+            additional_sumo_cmd='--lateral-resolution 0.3 --collision.action remove'))
 
 def env_creator(config):
     return env_pz
@@ -74,7 +78,7 @@ config = {
     "framework": "torch",
     "num_cpus_per_worker": 1,
     "resources_per_trial": 2,
-    "num_workers": 1,
+    "num_workers": 4,
     "horizon": 2000,
     "soft_horizon": False
 }

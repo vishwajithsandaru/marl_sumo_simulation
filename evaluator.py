@@ -11,10 +11,10 @@ net_file = './network/colombo-suburbs.net.xml'
 route_file = './network/colombo-suburbs.rou.xml'
 sumo_cfg_file = './network/colombo-suburbs.net.xml'
 ray_results_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results'
-checkpoint_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results/PPO_2024-03-18_22-49-33/PPO_SumoEnv_b024c_00000_0_2024-03-18_22-49-33/checkpoint_000000'
+checkpoint_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results/PPO_2024-03-20_13-20-38/PPO_SumoEnv_8a9d6_00000_0_2024-03-20_13-20-38/checkpoint_000000'
 use_gui = False
 num_seconds = 5005
-out_csv_name='./output/marl/info'
+out_csv_name='./output/marl/info2'
 
 ray.shutdown()
 ray.init()
