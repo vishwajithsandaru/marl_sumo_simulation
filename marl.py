@@ -7,21 +7,31 @@ from ray import tune
 from ray.tune.registry import register_env
 from ray.rllib.env import PettingZooEnv
 from reward import custom_waiting_time_reward
+from ray.rllib.algorithms.ppo import PPOConfig
+from ray.rllib.algorithms.algorithm_config import AlgorithmConfig
 # from torchrl.envs.libs.pettingzoo import PettingZooWrapper
 
-net_file = './network/colombo-suburbs.net.xml'
-route_file = './network/colombo-suburbs.rou.xml'
-sumo_cfg_file = './network/colombo-suburbs.net.xml'
-ray_results_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results'
+# net_file = './network/colombo-suburbs.net.xml'
+# route_file = './network/colombo-suburbs.rou.xml'
+# sumo_cfg_file = './network/colombo-suburbs.net.xml'
+# ray_results_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results'
+# use_gui = False
+# num_seconds = 10000
+
+net_file = './sumo-net/4x4.net.xml'
+route_file = './sumo-net/4x4c1c2c1c2.rou.xml'
+sumo_cfg_file = './sumo-net/4x4.sumocfg'
+ray_results_path = 'D:\Workspace\Personal\fyp\marl_sumo_simulation\ray_results'
 use_gui = False
-num_seconds = 10000
+num_seconds = 80000
+out_csv_name='outputs/4x4grid/ppo'
 
-wandb.login()
-wandb.tensorboard.patch(root_logdir="./ray_results")
+# wandb.login()
+# wandb.tensorboard.patch(root_logdir="./ray_results")
 
-wandb.init(
-    project="sumo_petting_zoo_rllib",
-)
+# wandb.init(
+#     project="sumo_petting_zoo_rllib",
+# )
 
 ray.shutdown()
 ray.init()
@@ -53,7 +63,6 @@ env_pz = ParallelPettingZooEnv(sumo_rl.parallel_env(
             route_file=route_file,
             use_gui=use_gui,
             num_seconds=num_seconds,
-            reward_fn=custom_waiting_time_reward,
             time_to_teleport=500,
             additional_sumo_cmd='--lateral-resolution 0.3 --collision.action remove'))
 
@@ -66,31 +75,75 @@ env_pz.close()
 
 agents = [a for a in env_pz.get_agent_ids()]
 
-config = {
-    "env": "SumoEnv",
-    "multiagent": {
-        "policies": {
-            agent_id: custom_policy_fn(env_pz, agent_id)
-            for agent_id in agents
-        },
-        "policy_mapping_fn": policy_mapping,
-    },
-    "framework": "torch",
-    "num_cpus_per_worker": 1,
-    "resources_per_trial": 2,
-    "num_workers": 4,
-    "horizon": 2000,
-    "soft_horizon": False
-}
+# config = {
+#     "env": "SumoEnv",
+#     "multiagent": {
+#         "policies": {
+#             agent_id: custom_policy_fn(env_pz, agent_id)
+#             for agent_id in agents
+#         },
+#         "policy_mapping_fn": policy_mapping,
+#     },
+#     "training": {
+#         "batch_size": 512,
+#         "lr": 2e-5,
+#         "gamma": 0.95,
+#         "lambda": 0.9,
+#         "use_gae": True,
+#         "clip_param": 0.4,
+#         "grad_clip": None,
+#         "entropy_coeff": 0.1,
+#         "vf_loss_coeff": 0.25,
+#         "sgd_minibatch_size": 64,
+#         "num_sgd_iter": 10,
+#         "rollout_fragment_length": 128,
+#         "num_rollout_workers": 4
+#     },
+#     "framework": "torch",
+#     "num_cpus_per_worker": 1,
+#     "resources_per_trial": 2,
+#     "num_workers": 4,
+#     "horizon": 2000,
+#     "soft_horizon": False
+# }
+
+
+config = (
+        PPOConfig()
+        .environment(env="SumoEnv")
+        .rollouts(num_rollout_workers=4, rollout_fragment_length=128)
+        .training(
+            train_batch_size=512,
+            lr=2e-5,
+            gamma=0.95,
+            lambda_=0.9,
+            use_gae=True,
+            clip_param=0.4,
+            grad_clip=None,
+            entropy_coeff=0.1,
+            vf_loss_coeff=0.25,
+            sgd_minibatch_size=64,
+            num_sgd_iter=10,
+        )
+        .debugging(log_level="ERROR")
+        .framework(framework="torch")
+        .multi_agent(
+            policies= {
+                agent_id: custom_policy_fn(env_pz, agent_id)
+                for agent_id in agents
+            },
+            policy_mapping_fn=policy_mapping
+        )
+)
 
 results = tune.run(
     "PPO",
-    config=config,
-    stop={"timesteps_total": 500000},
-    checkpoint_at_end=True,
+    config=config.to_dict(),
+    stop={"timesteps_total": 100000},
+    checkpoint_freq=10,
     local_dir=ray_results_path,
 )
 
 
-wandb.finish()
+# wandb.finish()
     
