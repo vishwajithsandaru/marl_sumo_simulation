@@ -7,14 +7,23 @@ from ray import tune
 from ray.tune.registry import register_env
 from ray.rllib.algorithms.ppo import PPO
 
+# net_file = './network/colombo-suburbs.net.xml'
+# route_file = './network/colombo-suburbs.rou.xml'
+# sumo_cfg_file = './network/colombo-suburbs.net.xml'
+# ray_results_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results'
+# checkpoint_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results/PPO_2024-03-20_13-20-38/PPO_SumoEnv_8a9d6_00000_0_2024-03-20_13-20-38/checkpoint_000000'
+# use_gui = False
+# num_seconds = 5005
+# out_csv_name='./output/marl/info2'
+
 net_file = './network/colombo-suburbs.net.xml'
 route_file = './network/colombo-suburbs.rou.xml'
 sumo_cfg_file = './network/colombo-suburbs.net.xml'
-ray_results_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results'
-checkpoint_path = '/home/sandaruvi/Workspace/Playground/marl_sumo_simulation/ray_results/PPO_2024-03-20_13-20-38/PPO_SumoEnv_8a9d6_00000_0_2024-03-20_13-20-38/checkpoint_000000'
+ray_results_path = 'D:/Workspace/Personal/fyp/marl_sumo_simulation/ray_results'
+checkpoint_path = 'D:/Workspace/Personal/fyp/marl_sumo_simulation/ray_results/PPO_2024-03-20_23-46-56/PPO_SumoEnv_09114_00000_0_2024-03-20_23-46-56/checkpoint_000002'
 use_gui = False
 num_seconds = 5005
-out_csv_name='./output/marl/info2'
+out_csv_name='./output/marl/info'
 
 ray.shutdown()
 ray.init()
@@ -47,10 +56,10 @@ env_pz = ParallelPettingZooEnv(sumo_rl.parallel_env(
             route_file=route_file,
             use_gui=use_gui,
             num_seconds=num_seconds,
-            render_mode='human',
             add_per_agent_info=False,
             add_system_info=True,
-            out_csv_name=out_csv_name))
+            out_csv_name=out_csv_name,
+            additional_sumo_cmd='--lateral-resolution 0.3 --collision.action remove'))
 
 agents = [a for a in env_pz.get_agent_ids()]
 
