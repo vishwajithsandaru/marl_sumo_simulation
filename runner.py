@@ -12,13 +12,13 @@ if 'SUMO_HOME' in os.environ:
 else:
     sys.exit('SUMO_HOME is not defined.')
 
-time_steps = 5000
-net_file = "./sumo-net/4x4.net.xml"
-route_file = "./sumo-net/4x4c1c2c1c2.rou.xml"
-sumocfg_file = "./sumo-net/4x4.sumocfg"
+time_steps = 1000
+net_file = "./network/colombo-suburbs.net.xml"
+route_file = "./network/colombo-suburbs.rou.xml"
+sumocfg_file = "./network/colombo-suburbs.sumocfg"
 lateral_resolution = "0.3"
-output_csv = "output/info.csv"
-gui = True
+output_csv = "./output/fixed_time_phase/1000.csv"
+gui = False
 
 metrics = []
 
@@ -39,23 +39,21 @@ def start():
 
         # Getting system info
 
-        # if(time_step % 5 == 0):
-        #     info = {'step': traci.simulation.getTime()}
-        #     info.update(get_system_info())
+        if(time_step % 5 == 0):
+            info = {'step': traci.simulation.getTime()}
+            info.update(get_system_info())
 
-        #     metrics.append(info.copy())
+            metrics.append(info.copy())
         print(f'Current Step: {traci.simulation.getTime()}', end='\r')
 
-    # df = pd.DataFrame(metrics)
-    # Path(Path(output_csv).parent).mkdir(parents=True, exist_ok=True)
-    # df.to_csv(output_csv, index=False)
+    df = pd.DataFrame(metrics)
+    Path(Path(output_csv).parent).mkdir(parents=True, exist_ok=True)
+    df.to_csv(output_csv, index=False)
 
     traci.close()
 
 def get_system_info():
     vehicles = traci.vehicle.getIDList()
-    speeds_mc = []
-    speeds_mb = []
     waiting_times_mc = [] 
     waiting_times_mb = []
 
