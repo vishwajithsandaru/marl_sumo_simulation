@@ -25,6 +25,7 @@ def get_custom_accumulated_waiting_time_per_lane(ts: TrafficSignal, mb_weight: f
 
 def calculate_custom_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight: float = 2.0) -> List[float]:
     accumulated_waiting_time_per_lane = []
+
     for lane in ts.lanes:
         vehicle_list = ts.sumo.lane.getLastStepVehicleIDs(lane)
         lane_waiting_time = 0.0
