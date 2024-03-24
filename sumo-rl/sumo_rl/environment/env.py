@@ -186,6 +186,9 @@ class SumoEnvironment(gym.Env):
         conn.close()
 
         self.vehicles = dict()
+        # This dict is added for custom implementation to store vehicle data against edges
+        self.vehicle_route = dict()
+
         self.reward_range = (-float("inf"), float("inf"))
         self.episode = 0
         self.metrics = []
@@ -284,6 +287,9 @@ class SumoEnvironment(gym.Env):
             }
 
         self.vehicles = dict()
+        
+        # This dict is added for custom implementation to store vehicle data against edges
+        self.vehicle_route = dict()
 
         if self.single_agent:
             return self._compute_observations()[self.ts_ids[0]], self._compute_info()

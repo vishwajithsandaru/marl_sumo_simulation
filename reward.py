@@ -1,6 +1,6 @@
 from typing import List
 from sumo_rl.environment.traffic_signal import TrafficSignal
-from edge_info import key_exists, get_lanes
+from edge_info import key_exists, get_routes, get_containing_edges
 
 
 def get_custom_accumulated_waiting_time_per_lane(ts: TrafficSignal, mb_weight: float = 2.0) -> List[float]:
@@ -27,14 +27,7 @@ def get_custom_accumulated_waiting_time_per_lane(ts: TrafficSignal, mb_weight: f
 def calculate_custom_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight: float = 2.0) -> List[float]:
     accumulated_waiting_time_per_lane = []
 
-    _lanes = []
-
-    if key_exists(ts.id):
-         _lanes = get_lanes(ts)
-    else:
-         _lanes = ts.lanes
-
-    for lane in _lanes:
+    for lane in ts.lanes:
         vehicle_list = ts.sumo.lane.getLastStepVehicleIDs(lane)
         lane_waiting_time = 0.0
         for vehicle in vehicle_list:
@@ -56,8 +49,35 @@ def calculate_custom_accumulated_waiting_time(ts: TrafficSignal, motorbike_weigh
     return accumulated_waiting_time_per_lane
 
 
+def calculate_route_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight: float = 2.0) -> List[float]:
+     
+    routes = get_routes(ts_id=ts.id)
+    accumulated_waiting_time_per_route = []
+
+    for route in routes:
+        edges = get_containing_edges(route_id=route)
+        accumulated_waiting_time_of_edges = 0
+        for edge in edges:
+            vehicle_list = ts.sumo.edge.getLastStepVehicleIDs(edge)
+            acc_waiting_time_of_edge = 0
+            for vehicle in vehicle_list:
+                waiting_time = ts.sumo.vehicle.getWaitingTime(vehicle)
+
+                if vehicle in ts.env.vehicle_route and route in ts.env.vehicle_route[vehicle]:
+                    ts.env.vehicle_route[vehicle][route] += waiting_time
+                    waiting_time = ts.env.vehicle_route[vehicle][route] 
+                else:
+                    ts.env.vehicle_route[vehicle][route] = waiting_time
+                acc_waiting_time_of_edge += waiting_time
+            accumulated_waiting_time_of_edges += acc_waiting_time_of_edge
+        
+        accumulated_waiting_time_per_route.append(accumulated_waiting_time_of_edges)
+
+    return accumulated_waiting_time_per_route
+
 def custom_waiting_time_reward(ts: TrafficSignal):
-        ts_wait = sum(calculate_custom_accumulated_waiting_time(ts)) / 100.0
+        
+        ts_wait = sum(calculate_route_accumulated_waiting_time(ts)) / 100.0 if key_exists(ts.id) else sum(calculate_custom_accumulated_waiting_time(ts)) / 100.0
         # print("Last Measure: ", ts.last_measure)
         # print("TS Wait: ", ts_wait)
         reward = ts.last_measure - ts_wait
