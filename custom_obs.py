@@ -23,7 +23,7 @@ class PrioratizingObs(ObservationFunction):
         routes_density = []
 
         for route in routes:
-            edges = get_containing_edges(route_id=self.ts.id, route_id=route)
+            edges = get_containing_edges(ts_id=self.ts.id, route_id=route)
             total_vehicle_count = 0
             route_length = 0
             last_step_length = 0
@@ -51,7 +51,7 @@ class PrioratizingObs(ObservationFunction):
         routes_queue = []
 
         for route in routes:
-            edges = get_containing_edges(route_id=self.ts.id, route_id=route)
+            edges = get_containing_edges(ts_id=self.ts.id, route_id=route)
             total_halted_vehicle_count = 0
             route_length = 0
             last_step_length = 0
@@ -73,10 +73,6 @@ class PrioratizingObs(ObservationFunction):
             vehicle_list = self.ts.sumo.lane.getLastStepVehicleIDs(_lane)
             motorbike_count = sum(1 for vehicle in vehicle_list if self.ts.sumo.vehicle.getTypeID(vehicle) == 'motorbike')
             counts.append(motorbike_count)
-
-        # if self.ts.id=='pepiliyana_jnct':
-        #     print('Lanes: ', _lanes)
-        #     print('Çounts: ', counts)
 
         max_val = max(counts)
         max_index = counts.index(max_val)
@@ -121,18 +117,38 @@ class PrioratizingObs(ObservationFunction):
 
         lane_representation = self._one_hot_enc_max_mb_count()
 
-        # print(lane_representation)
+        density = []
+        queue = []
 
-        density = self.ts.get_lanes_density()
-        queue = self.ts.get_lanes_queue()
+        if key_exists(self.ts.id):
+            density = self.get_routes_density()
+            queue = self.get_routes_queue()
+
+            print('-----------start------------')
+            print('Route Density: ', density)
+            print('Route Queue: ', queue)
+            print('------------end------------')
+        else:
+            density = self.ts.get_lanes_density()
+            queue = self.ts.get_lanes_queue()
+
         observation = np.array(phase_id + min_green + density + queue, dtype=np.float32)
         return observation
 
     def observation_space(self) -> spaces.Box:
         """Return the observation space."""
-        return spaces.Box(
-            low=np.zeros(self.ts.num_green_phases + 1 + 2 * len(self.ts.lanes), dtype=np.float32),
-            high=np.ones(self.ts.num_green_phases + 1 + 2 * len(self.ts.lanes), dtype=np.float32),
-        )
+
+        if key_exists(self.ts.id):
+            _routes = get_routes(self.ts.id)
+            return spaces.Box(
+                low=np.zeros(self.ts.num_green_phases + 1 + 2 * len(_routes), dtype=np.float32),
+                high=np.ones(self.ts.num_green_phases + 1 + 2 * len(_routes), dtype=np.float32),
+            )
+        else:
+            return spaces.Box(
+                low=np.zeros(self.ts.num_green_phases + 1 + 2 * len(self.ts.lanes), dtype=np.float32),
+                high=np.ones(self.ts.num_green_phases + 1 + 2 * len(self.ts.lanes), dtype=np.float32),
+            )
+
     
     

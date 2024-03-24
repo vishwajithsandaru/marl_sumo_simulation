@@ -54,8 +54,10 @@ def calculate_route_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight
     routes = get_routes(ts_id=ts.id)
     accumulated_waiting_time_per_route = []
 
+    # print('--------start--------')
+
     for route in routes:
-        edges = get_containing_edges(route_id=route)
+        edges = get_containing_edges(ts_id=ts.id, route_id=route)
         accumulated_waiting_time_of_edges = 0
         for edge in edges:
             vehicle_list = ts.sumo.edge.getLastStepVehicleIDs(edge)
@@ -66,12 +68,19 @@ def calculate_route_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight
                 if vehicle in ts.env.vehicle_route and route in ts.env.vehicle_route[vehicle]:
                     ts.env.vehicle_route[vehicle][route] += waiting_time
                     waiting_time = ts.env.vehicle_route[vehicle][route] 
-                else:
+                elif vehicle in ts.env.vehicle_route:
                     ts.env.vehicle_route[vehicle][route] = waiting_time
+                else:
+                    ts.env.vehicle_route[vehicle] = {
+                        'route': waiting_time
+                    }
                 acc_waiting_time_of_edge += waiting_time
             accumulated_waiting_time_of_edges += acc_waiting_time_of_edge
         
         accumulated_waiting_time_per_route.append(accumulated_waiting_time_of_edges)
+        # print(f'Acc waiting time lane = {route} : ', accumulated_waiting_time_of_edges)
+
+    # print('--------end--------')
 
     return accumulated_waiting_time_per_route
 
