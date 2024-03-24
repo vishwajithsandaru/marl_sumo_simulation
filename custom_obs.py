@@ -1,6 +1,8 @@
+from typing import List
 import numpy as np
 from sumo_rl.environment.observations import ObservationFunction
 from sumo_rl.environment.traffic_signal import TrafficSignal
+from edge_info import get_lanes, key_exists
 
 from gymnasium import spaces
 
@@ -10,6 +12,35 @@ class PrioratizingObs(ObservationFunction):
     def __init__(self, ts: TrafficSignal):
         """Initialize default observation function."""
         super().__init__(ts)
+
+    def get_lanes_density(self) -> List[float]:
+        ret = []
+        if key_exists(ts_id=self.ts.id):
+            _lanes = get_lanes(self.ts)
+            lanes_density = [
+                self.sumo.lane.getLastStepVehicleNumber(lane)
+                / (self.ts.lanes_length[lane] / (self.ts.MIN_GAP + self.ts.sumo.lane.getLastStepLength(lane)))
+                for lane in _lanes
+            ]
+
+            ret = [min(1, density) for density in lanes_density]
+        else:
+
+
+        return ret
+
+    def get_lanes_queue(self) -> List[float]:
+        """Returns the queue [0,1] of the vehicles in the incoming lanes of the intersection.
+
+        Obs: The queue is computed as the number of vehicles halting divided by the number of vehicles that could fit in the lane.
+        """
+        lanes_queue = [
+            self.sumo.lane.getLastStepHaltingNumber(lane)
+            / (self.lanes_length[lane] / (self.MIN_GAP + self.sumo.lane.getLastStepLength(lane)))
+            for lane in self.lanes
+        ]
+        return [min(1, queue) for queue in lanes_queue]
+
 
     def _one_hot_enc_max_mb_count(self) -> int:
         _lanes = self.ts.lanes
