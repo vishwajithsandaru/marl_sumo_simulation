@@ -2,7 +2,7 @@ from typing import List
 import numpy as np
 from sumo_rl.environment.observations import ObservationFunction
 from sumo_rl.environment.traffic_signal import TrafficSignal
-from edge_info import get_lanes, key_exists
+from edge_info import key_exists, get_routes, get_containing_edges
 
 from gymnasium import spaces
 
@@ -13,33 +13,57 @@ class PrioratizingObs(ObservationFunction):
         """Initialize default observation function."""
         super().__init__(ts)
 
-    def get_lanes_density(self) -> List[float]:
-        ret = []
-        if key_exists(ts_id=self.ts.id):
-            _lanes = get_lanes(self.ts)
-            lanes_density = [
-                self.sumo.lane.getLastStepVehicleNumber(lane)
-                / (self.ts.lanes_length[lane] / (self.ts.MIN_GAP + self.ts.sumo.lane.getLastStepLength(lane)))
-                for lane in _lanes
-            ]
+    def get_routes_density(self) -> List[float]:
+        """Returns the density [0,1] of the vehicles in the incoming lanes of the intersection.
 
-            ret = [min(1, density) for density in lanes_density]
-        else:
+        Obs: The density is computed as the number of vehicles divided by the number of vehicles that could fit in the lane.
+        """
+        routes = get_routes(self.ts.id)
+
+        routes_density = []
+
+        for route in routes:
+            edges = get_containing_edges(route_id=self.ts.id, route_id=route)
+            total_vehicle_count = 0
+            route_length = 0
+            last_step_length = 0
+
+            for edge in edges:
+                total_vehicle_count += self.ts.sumo.edge.getLastStepVehicleNumber(edge)
+                route_length += self.ts.sumo.lane.getLength(edge+'_0')
+                last_step_length += self.ts.MIN_GAP + self.ts.sumo.edge.getLastStepLength(edge)
+
+            density = total_vehicle_count / (route_length / last_step_length)
+            routes_density.append(density)
+
+        return [min(1, density) for density in routes_density]
 
 
-        return ret
+        
 
-    def get_lanes_queue(self) -> List[float]:
+    def get_routes_queue(self) -> List[float]:
         """Returns the queue [0,1] of the vehicles in the incoming lanes of the intersection.
 
         Obs: The queue is computed as the number of vehicles halting divided by the number of vehicles that could fit in the lane.
         """
-        lanes_queue = [
-            self.sumo.lane.getLastStepHaltingNumber(lane)
-            / (self.lanes_length[lane] / (self.MIN_GAP + self.sumo.lane.getLastStepLength(lane)))
-            for lane in self.lanes
-        ]
-        return [min(1, queue) for queue in lanes_queue]
+        routes = get_routes(self.ts.id)
+
+        routes_queue = []
+
+        for route in routes:
+            edges = get_containing_edges(route_id=self.ts.id, route_id=route)
+            total_halted_vehicle_count = 0
+            route_length = 0
+            last_step_length = 0
+
+            for edge in edges:
+                total_halted_vehicle_count += self.ts.sumo.edge.getLastStepHaltingNumber(edge)
+                route_length += self.ts.sumo.lane.getLength(edge+'_0')
+                last_step_length += self.ts.MIN_GAP + self.ts.sumo.edge.getLastStepLength(edge)
+
+            queue = total_halted_vehicle_count / (route_length / last_step_length)
+            routes_queue.append(queue)
+        return [min(1, queue) for queue in routes_queue]
 
 
     def _one_hot_enc_max_mb_count(self) -> int:
@@ -60,9 +84,34 @@ class PrioratizingObs(ObservationFunction):
         lane_representation = [0] * len(_lanes)
         
         if max_val != 0:
-            lane_representation[max_index] = max_val
+            lane_representation[max_index] = 1
 
         return lane_representation
+    
+    def _one_hot_enc_max_mb_count_route(self) -> int:
+        
+        route_mb_count = []
+
+        routes = get_routes(self.ts.id)
+
+        for route in routes:
+            mb_count = 0
+            edges = get_containing_edges(ts_id=self.ts.id, route_id=route)
+            for edge in edges:
+                vehicle_list = self.ts.sumo.edge.getLastStepVehicleIDs(edge)
+                _mb_count = sum(1 for vehicle in vehicle_list if self.ts.sumo.vehicle.getTypeID(vehicle) == 'motorbike')
+                mb_count += _mb_count
+            route_mb_count.append(mb_count)
+        
+        max_val = max(route_mb_count)
+        max_index = route_mb_count.index(max_val)
+
+        route_representation = [0] * len(routes)
+        if max_val != 0:
+            route_representation[max_index] = 1
+
+        return route_representation
+        
 
     def __call__(self) -> np.ndarray:
         """Customzed observation to include two-wheeler details"""
