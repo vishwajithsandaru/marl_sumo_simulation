@@ -115,7 +115,7 @@ class PrioratizingObs(ObservationFunction):
         phase_id = [1 if self.ts.green_phase == i else 0 for i in range(self.ts.num_green_phases)]  # one-hot encoding
         min_green = [0 if self.ts.time_since_last_phase_change < self.ts.min_green + self.ts.yellow_time else 1]        
 
-        lane_representation = self._one_hot_enc_max_mb_count()
+        # lane_representation = self._one_hot_enc_max_mb_count()
 
         density = []
         queue = []
