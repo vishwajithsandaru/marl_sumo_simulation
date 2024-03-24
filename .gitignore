@@ -1,2 +1,4 @@
 vscode/
 wandb/
+output/
+ray_results/
