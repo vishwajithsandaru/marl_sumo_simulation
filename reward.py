@@ -54,7 +54,8 @@ def calculate_route_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight
     routes = get_routes(ts_id=ts.id)
     accumulated_waiting_time_per_route = []
 
-    # print('--------start--------')
+    # if(ts.id == 'delkanda_jnct'):
+    #     print('--------start--------')
 
     for route in routes:
         edges = get_containing_edges(ts_id=ts.id, route_id=route)
@@ -78,9 +79,11 @@ def calculate_route_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight
             accumulated_waiting_time_of_edges += acc_waiting_time_of_edge
         
         accumulated_waiting_time_per_route.append(accumulated_waiting_time_of_edges)
-        # print(f'Acc waiting time lane = {route} : ', accumulated_waiting_time_of_edges)
+        # if(ts.id == 'delkanda_jnct'):
+        #     print(f'Acc waiting time lane = {route} : ', accumulated_waiting_time_of_edges)
 
-    # print('--------end--------')
+    # if(ts.id == 'delkanda_jnct'):
+    #     print('--------end--------')
 
     return accumulated_waiting_time_per_route
 

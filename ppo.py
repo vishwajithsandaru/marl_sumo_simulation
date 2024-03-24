@@ -14,9 +14,9 @@ net_file = './network/colombo-suburbs.net.xml'
 route_file = './network/colombo-suburbs.rou.xml'
 sumo_cfg_file = './network/colombo-suburbs.net.xml'
 ray_results_path = 'D:/Workspace/Personal/fyp/marl_sumo_simulation/ray_results'
-use_gui = True
-num_seconds = 1000
-out_csv_name='./output/marl/ppo/colombo'
+use_gui = False
+num_seconds = 2000
+out_csv_name='./output/marl/ppo-new/colombo'
 
 # net_file = './sumo-net/4x4.net.xml'
 # route_file = './sumo-net/4x4c1c2c1c2.rou.xml'
@@ -71,7 +71,7 @@ agents = [a for a in env_pz.get_agent_ids()]
 config = (
         PPOConfig()
         .environment(env="SumoEnv")
-        .rollouts(num_rollout_workers=1, rollout_fragment_length=128)
+        .rollouts(num_rollout_workers=4, rollout_fragment_length=128)
         .training(
             train_batch_size=512,
             lr=2e-5,

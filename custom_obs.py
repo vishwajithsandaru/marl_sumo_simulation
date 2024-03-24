@@ -124,10 +124,10 @@ class PrioratizingObs(ObservationFunction):
             density = self.get_routes_density()
             queue = self.get_routes_queue()
 
-            print('-----------start------------')
-            print('Route Density: ', density)
-            print('Route Queue: ', queue)
-            print('------------end------------')
+            # print('-----------start------------')
+            # print('Route Density: ', density)
+            # print('Route Queue: ', queue)
+            # print('------------end------------')
         else:
             density = self.ts.get_lanes_density()
             queue = self.ts.get_lanes_queue()
