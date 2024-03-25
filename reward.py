@@ -75,7 +75,8 @@ def calculate_route_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight
                     ts.env.vehicle_route[vehicle] = {
                         'route': waiting_time
                     }
-                acc_waiting_time_of_edge += waiting_time
+                is_motorbike = ts.sumo.vehicle.getTypeID(vehicle) == "motorbike"
+                acc_waiting_time_of_edge += waiting_time * (motorbike_weight if is_motorbike else 1.0)
             accumulated_waiting_time_of_edges += acc_waiting_time_of_edge
         
         accumulated_waiting_time_per_route.append(accumulated_waiting_time_of_edges)
@@ -89,7 +90,7 @@ def calculate_route_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight
 
 def custom_waiting_time_reward(ts: TrafficSignal):
         
-        ts_wait = sum(calculate_route_accumulated_waiting_time(ts)) / 100.0 if key_exists(ts.id) else sum(calculate_custom_accumulated_waiting_time(ts)) / 100.0
+        ts_wait = sum(calculate_route_accumulated_waiting_time(ts, motorbike_weight=2.5)) / 100.0 if key_exists(ts.id) else sum(calculate_custom_accumulated_waiting_time(ts)) / 100.0
         # print("Last Measure: ", ts.last_measure)
         # print("TS Wait: ", ts_wait)
         reward = ts.last_measure - ts_wait

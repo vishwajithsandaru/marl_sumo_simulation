@@ -115,24 +115,31 @@ class PrioratizingObs(ObservationFunction):
         phase_id = [1 if self.ts.green_phase == i else 0 for i in range(self.ts.num_green_phases)]  # one-hot encoding
         min_green = [0 if self.ts.time_since_last_phase_change < self.ts.min_green + self.ts.yellow_time else 1]        
 
-        # lane_representation = self._one_hot_enc_max_mb_count()
-
         density = []
         queue = []
+        mb_traffic_lane_representation = []
 
         if key_exists(self.ts.id):
             density = self.get_routes_density()
             queue = self.get_routes_queue()
 
+            mb_traffic_lane_representation = self._one_hot_enc_max_mb_count_route()
             # print('-----------start------------')
             # print('Route Density: ', density)
             # print('Route Queue: ', queue)
             # print('------------end------------')
+            if(self.ts.id == 'pepiliyana_jnct'):
+                print('-----------start------------')
+                print('MB traffic lane representation: ', mb_traffic_lane_representation)
+                print('------------end------------')
+
         else:
             density = self.ts.get_lanes_density()
             queue = self.ts.get_lanes_queue()
 
-        observation = np.array(phase_id + min_green + density + queue, dtype=np.float32)
+            mb_traffic_lane_representation = self._one_hot_enc_max_mb_count()
+
+        observation = np.array(phase_id + min_green + density + queue + mb_traffic_lane_representation, dtype=np.float32)
         return observation
 
     def observation_space(self) -> spaces.Box:
@@ -141,8 +148,8 @@ class PrioratizingObs(ObservationFunction):
         if key_exists(self.ts.id):
             _routes = get_routes(self.ts.id)
             return spaces.Box(
-                low=np.zeros(self.ts.num_green_phases + 1 + 2 * len(_routes), dtype=np.float32),
-                high=np.ones(self.ts.num_green_phases + 1 + 2 * len(_routes), dtype=np.float32),
+                low=np.zeros(self.ts.num_green_phases + 1 + 3 * len(_routes), dtype=np.float32),
+                high=np.ones(self.ts.num_green_phases + 1 + 3 * len(_routes), dtype=np.float32),
             )
         else:
             return spaces.Box(
