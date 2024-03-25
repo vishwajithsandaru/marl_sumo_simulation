@@ -14,7 +14,7 @@ net_file = './network/colombo-suburbs.net.xml'
 route_file = './network/colombo-suburbs.rou.xml'
 sumo_cfg_file = './network/colombo-suburbs.net.xml'
 ray_results_path = 'D:/Workspace/Personal/fyp/marl_sumo_simulation/ray_results'
-use_gui = False
+use_gui = True
 num_seconds = 2000
 out_csv_name='./output/marl/ppo-new/colombo'
 
@@ -52,7 +52,7 @@ env_pz = ParallelPettingZooEnv(sumo_rl.parallel_env(
             num_seconds=num_seconds,
             time_to_teleport=500,
             min_green=20,
-            out_csv_name=out_csv_name,
+            # out_csv_name=out_csv_name,
             max_green=200,
             reward_fn=custom_waiting_time_reward,
             observation_class=PrioratizingObs,
@@ -71,7 +71,7 @@ agents = [a for a in env_pz.get_agent_ids()]
 config = (
         PPOConfig()
         .environment(env="SumoEnv")
-        .rollouts(num_rollout_workers=4, rollout_fragment_length=128)
+        .rollouts(num_rollout_workers=1, rollout_fragment_length=128)
         .training(
             train_batch_size=512,
             lr=2e-5,

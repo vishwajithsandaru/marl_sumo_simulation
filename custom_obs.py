@@ -71,7 +71,7 @@ class PrioratizingObs(ObservationFunction):
         counts = []
         for _lane in _lanes:
             vehicle_list = self.ts.sumo.lane.getLastStepVehicleIDs(_lane)
-            motorbike_count = sum(1 for vehicle in vehicle_list if self.ts.sumo.vehicle.getTypeID(vehicle) == 'motorbike')
+            motorbike_count = sum(1 for vehicle in vehicle_list if self.ts.sumo.vehicle.getTypeID(vehicle) == 'motorbike' and self.ts.sumo.vehicle.getSpeed(vehicle) <= 0.2)
             counts.append(motorbike_count)
 
         max_val = max(counts)
@@ -95,11 +95,13 @@ class PrioratizingObs(ObservationFunction):
             edges = get_containing_edges(ts_id=self.ts.id, route_id=route)
             for edge in edges:
                 vehicle_list = self.ts.sumo.edge.getLastStepVehicleIDs(edge)
-                _mb_count = sum(1 for vehicle in vehicle_list if self.ts.sumo.vehicle.getTypeID(vehicle) == 'motorbike')
+                _mb_count = sum(1 for vehicle in vehicle_list if self.ts.sumo.vehicle.getTypeID(vehicle) == 'motorbike' and self.ts.sumo.vehicle.getSpeed(vehicle) <= 0.2)
                 mb_count += _mb_count
             route_mb_count.append(mb_count)
         
         max_val = max(route_mb_count)
+        if(self.ts.id == 'pepiliyana_jnct'):
+            print('Route mb count: ', route_mb_count)
         max_index = route_mb_count.index(max_val)
 
         route_representation = [0] * len(routes)
@@ -129,9 +131,9 @@ class PrioratizingObs(ObservationFunction):
             # print('Route Queue: ', queue)
             # print('------------end------------')
             if(self.ts.id == 'pepiliyana_jnct'):
-                print('-----------start------------')
+                # print('-----------start------------')
                 print('MB traffic lane representation: ', mb_traffic_lane_representation)
-                print('------------end------------')
+                # print('------------end------------')
 
         else:
             density = self.ts.get_lanes_density()
@@ -153,8 +155,8 @@ class PrioratizingObs(ObservationFunction):
             )
         else:
             return spaces.Box(
-                low=np.zeros(self.ts.num_green_phases + 1 + 2 * len(self.ts.lanes), dtype=np.float32),
-                high=np.ones(self.ts.num_green_phases + 1 + 2 * len(self.ts.lanes), dtype=np.float32),
+                low=np.zeros(self.ts.num_green_phases + 1 + 3 * len(self.ts.lanes), dtype=np.float32),
+                high=np.ones(self.ts.num_green_phases + 1 + 3 * len(self.ts.lanes), dtype=np.float32),
             )
 
     
