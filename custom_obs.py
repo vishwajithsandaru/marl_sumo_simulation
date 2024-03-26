@@ -100,8 +100,8 @@ class PrioratizingObs(ObservationFunction):
             route_mb_count.append(mb_count)
         
         max_val = max(route_mb_count)
-        if(self.ts.id == 'pepiliyana_jnct'):
-            print('Route mb count: ', route_mb_count)
+        # if(self.ts.id == 'delkanda_jnct'):
+        #     print('Route mb count: ', route_mb_count)
         max_index = route_mb_count.index(max_val)
 
         route_representation = [0] * len(routes)
@@ -130,9 +130,9 @@ class PrioratizingObs(ObservationFunction):
             # print('Route Density: ', density)
             # print('Route Queue: ', queue)
             # print('------------end------------')
-            if(self.ts.id == 'pepiliyana_jnct'):
+            # if(self.ts.id == 'delkanda_jnct'):
                 # print('-----------start------------')
-                print('MB traffic lane representation: ', mb_traffic_lane_representation)
+                # print('MB traffic lane representation: ', mb_traffic_lane_representation)
                 # print('------------end------------')
 
         else:
