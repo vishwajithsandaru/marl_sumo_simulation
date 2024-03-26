@@ -88,7 +88,6 @@ config = (
             evaluation_duration=2,
             evaluation_parallel_to_training=True,
             evaluation_num_workers=2
-        
         )
         .training(
             train_batch_size=512,

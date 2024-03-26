@@ -23,7 +23,7 @@ route_file = 'D:/Workspace/Personal/fyp/marl_sumo_simulation/network/colombo-sub
 sumo_cfg_file = 'D:/Workspace/Personal/fyp/marl_sumo_simulation/network/colombo-suburbs.net.xml'
 ray_results_path = 'D:/Workspace/Personal/fyp/marl_sumo_simulation/ray_results'
 use_gui = False
-num_seconds = 2000
+num_seconds = 1000
 out_csv_name='D:/Workspace/Personal/fyp/marl_sumo_simulation/output/marl/ppo-2000s-3/colombo'
 
 # net_file = './network/colombo-suburbs.net.xml'
@@ -96,6 +96,8 @@ agents = [a for a in env_pz.get_agent_ids()]
 
 pbt = PopulationBasedTraining(
         metric="episode_reward_mean",
+        time_attr="training_iteration"
+        perturbation_interval=3,
         mode="max",
         hyperparam_mutations={
             "lambda": lambda: random.uniform(0.9, 1.0),
@@ -104,6 +106,7 @@ pbt = PopulationBasedTraining(
             "train_batch_size": lambda: random.randint(1000, 60000),
         },
         custom_explore_fn=explore,
+        log_config= True
     )
 
 config = (
@@ -144,7 +147,7 @@ config = (
 results = tune.run(
     "PPO",
     config=config.to_dict(),
-    stop={"timesteps_total": 20000},
+    stop={"timesteps_total": 10000},
     checkpoint_freq=10,
     local_dir=ray_results_path,
     scheduler=pbt,
