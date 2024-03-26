@@ -2,15 +2,19 @@ import sumo_rl
 import ray
 import wandb
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
-from ray import tune, train
+from ray import tune, air
 from ray.tune.registry import register_env
 from ray.rllib.env import PettingZooEnv
 from reward import custom_waiting_time_reward
-from ray.rllib.algorithms.ppo import PPOConfig, PPO
+from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.algorithm_config import AlgorithmConfig
 from custom_obs import PrioratizingObs
+from ray.tune import sample_from
 import random
+
+
 from ray.tune.schedulers import PopulationBasedTraining
+from ray.tune.schedulers.pb2 import PB2
 
 # Absolute paths are added for Ray evaluation
 
@@ -58,13 +62,14 @@ def policy_mapping(agent_id, episode, worker, **kwards):
     return agent_id
 
 def explore(config):
-        # ensure we collect enough timesteps to do sgd
-        if config["train_batch_size"] < config["sgd_minibatch_size"] * 2:
-            config["train_batch_size"] = config["sgd_minibatch_size"] * 2
-        # ensure we run at least one sgd iter
-        if config["num_sgd_iter"] < 1:
-            config["num_sgd_iter"] = 1
-        return config
+    # Ensure we collect enough timesteps to do sgd.
+    if config["train_batch_size"] < config["sgd_minibatch_size"] * 2:
+        config["train_batch_size"] = config["sgd_minibatch_size"] * 2
+    # Ensure we run at least one sgd iter.
+    if config["lambda"] > 1:
+        config["lambda"] = 1
+    config["train_batch_size"] = int(config["train_batch_size"])
+    return config
 
 env_pz = ParallelPettingZooEnv(sumo_rl.parallel_env(
             net_file=net_file,
@@ -79,7 +84,6 @@ env_pz = ParallelPettingZooEnv(sumo_rl.parallel_env(
             observation_class=PrioratizingObs,
             additional_sumo_cmd='--lateral-resolution 0.3 --collision.action remove'))
 
-
 def env_creator(config):
     return env_pz
 
@@ -89,24 +93,18 @@ env_pz.close()
 
 agents = [a for a in env_pz.get_agent_ids()]
 
-hyper_param_mutations = {
-    "lambda": lambda: random.uniform(0.9, 1.0),
-    "clip_param": lambda: random.uniform(0.01, 0.5),
-    "lr": [3e-3, 3e-4, 3e-4, 3e-5, 3e-5],
-    "num_sgd_iter": lambda: random.randint(1, 30),
-    "sgd_minibatch_size": lambda: random.randint(128, 16384),
-    "train_batch_size": lambda: random.randint(2000, 160000),
-}
 
 pbt = PopulationBasedTraining(
-        time_attr="time_total_s",
-        perturbation_interval=120,
-        resample_probability=0.25,
-        hyperparam_mutations=hyper_param_mutations,
+        metric="episode_reward_mean",
+        mode="max",
+        hyperparam_mutations={
+            "lambda": lambda: random.uniform(0.9, 1.0),
+            "clip_param": lambda: random.uniform(0.1, 0.5),
+            "lr": lambda: random.uniform(1e-3, 1e-5),
+            "train_batch_size": lambda: random.randint(1000, 60000),
+        },
         custom_explore_fn=explore,
     )
-
-stopping_criteria = {"training_iteration": 100, "episode_reward_mean": 10}
 
 config = (
         PPOConfig()
@@ -118,12 +116,14 @@ config = (
             evaluation_duration=2,
             evaluation_parallel_to_training=True,
             evaluation_num_workers=2
+        
         )
         .training(
-            train_batch_size=512,
+            train_batch_size=sample_from(lambda spec: random.randint(1000, 60000)),
             gamma=0.95,
+            lambda_=sample_from(lambda spec: random.uniform(0.9, 1.0)),
             use_gae=True,
-            clip_param=0.4,
+            clip_param=sample_from(lambda spec: random.uniform(0.1, 0.5)),
             grad_clip=None,
             entropy_coeff=0.1,
             vf_loss_coeff=0.25,
@@ -141,18 +141,16 @@ config = (
         )
 )
 
-tuner = tune.Tuner(
-        "PPO",
-        tune_config=tune.TuneConfig(
-            metric="episode_reward_mean",
-            mode="max",
-            scheduler=pbt,
-        ),
-        param_space=config.to_dict(),
-        run_config=train.RunConfig(stop=stopping_criteria, local_dir=ray_results_path),
-    )
-results = tuner.fit()
+results = tune.run(
+    "PPO",
+    config=config.to_dict(),
+    stop={"timesteps_total": 20000},
+    checkpoint_freq=10,
+    local_dir=ray_results_path,
+    scheduler=pbt,
+    reuse_actors=True
+)
 
 
-# # wandb.finish()
+# wandb.finish()
     
