@@ -6,14 +6,9 @@ from ray import tune, air
 from ray.tune.registry import register_env
 from ray.rllib.env import PettingZooEnv
 from reward import custom_waiting_time_reward
-from ray.rllib.algorithms.ppo import PPOConfig
+from ray.rllib.algorithms.appo import APPOConfig
 from ray.rllib.algorithms.algorithm_config import AlgorithmConfig
 from custom_obs import PrioratizingObs
-from ray.tune import sample_from
-import random
-
-from ray.tune.schedulers import ASHAScheduler
-from ray.tune.schedulers.pb2 import PB2
 
 # Absolute paths are added for Ray evaluation
 
@@ -60,16 +55,6 @@ def custom_policy_fn(env_pz: ParallelPettingZooEnv,  agent_id):
 def policy_mapping(agent_id, episode, worker, **kwards):
     return agent_id
 
-def explore(config):
-    # Ensure we collect enough timesteps to do sgd.
-    if config["train_batch_size"] < config["sgd_minibatch_size"] * 2:
-        config["train_batch_size"] = config["sgd_minibatch_size"] * 2
-    # Ensure we run at least one sgd iter.
-    if config["lambda"] > 1:
-        config["lambda"] = 1
-    config["train_batch_size"] = int(config["train_batch_size"])
-    return config
-
 env_pz = ParallelPettingZooEnv(sumo_rl.parallel_env(
             net_file=net_file,
             route_file=route_file,
@@ -93,36 +78,27 @@ env_pz.close()
 agents = [a for a in env_pz.get_agent_ids()]
 
 
-# pbt = PopulationBasedTraining(
-#         metric="episode_reward_mean",
-#         time_attr="training_iteration",
-#         perturbation_interval=3,
-#         mode="max",
-#         hyperparam_mutations={
-#             "lambda": lambda: random.uniform(0.9, 1.0),
-#             "clip_param": lambda: random.uniform(0.1, 0.5),
-#             "lr": lambda: random.uniform(1e-3, 1e-5),
-#             "train_batch_size": lambda: random.randint(1000, 60000),
-#         },
-#         custom_explore_fn=explore,
-#         log_config= True
-#     )
-
 config = (
-        PPOConfig()
+        APPOConfig()
         .environment(env="SumoEnv")
-        .rollouts(num_rollout_workers=4, rollout_fragment_length='auto')
+        .rollouts(num_rollout_workers=4, rollout_fragment_length=128)
+        .evaluation(
+            evaluation_interval=3,
+            evaluation_duration_unit='episodes',
+            evaluation_duration=2,
+            evaluation_parallel_to_training=True,
+            evaluation_num_workers=2
+        )
         .training(
-            train_batch_size=sample_from(lambda spec: random.randint(1000, 60000)),
+            train_batch_size=512,
+            lr=2e-5,
             gamma=0.95,
-            lr = sample_from(lambda spec: random.uniform(1e-3, 1e-5)),
-            lambda_=sample_from(lambda spec: random.uniform(0.9, 1.0)),
+            lambda_=0.9,
             use_gae=True,
-            clip_param=sample_from(lambda spec: random.uniform(0.1, 0.5)),
+            clip_param=0.4,
             grad_clip=None,
             entropy_coeff=0.1,
             vf_loss_coeff=0.25,
-            sgd_minibatch_size=64,
             num_sgd_iter=10,
         )
         .debugging(log_level="ERROR")
@@ -136,19 +112,12 @@ config = (
         )
 )
 
-config = config.to_dict()
-config['horizon'] = 500
-
 results = tune.run(
-    "PPO",
-    config=config,
-    stop={"timesteps_total": 10000,},
+    "APPO",
+    config=config.to_dict(),
+    stop={"timesteps_total": 100000},
     checkpoint_freq=10,
     local_dir=ray_results_path,
-    scheduler=ASHAScheduler(),
-    reuse_actors=True,
-    metric='episode_reward_mean',
-    mode='max',
 )
 
 
