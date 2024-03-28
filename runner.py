@@ -12,12 +12,12 @@ if 'SUMO_HOME' in os.environ:
 else:
     sys.exit('SUMO_HOME is not defined.')
 
-time_steps = 5000
+time_steps = 3000
 net_file = "./network/colombo-suburbs.net.xml"
 route_file = "./network/colombo-suburbs.rou.xml"
 sumocfg_file = "./network/colombo-suburbs.sumocfg"
 lateral_resolution = "0.3"
-output_csv = "./output/fixed_time_phase/5000.csv"
+output_csv = "./output/fixed_time_phase/3000s1.csv"
 gui = False
 
 metrics = []

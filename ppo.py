@@ -18,7 +18,7 @@ sumo_cfg_file = 'D:/Workspace/Personal/fyp/marl_sumo_simulation/network/colombo-
 ray_results_path = 'D:/Workspace/Personal/fyp/marl_sumo_simulation/ray_results'
 use_gui = False
 num_seconds = 5000
-out_csv_name='D:/Workspace/Personal/fyp/marl_sumo_simulation/output/marl/ppo-2000s-3/colombo'
+out_csv_name='D:/Workspace/Personal/fyp/marl_sumo_simulation/output/marl/ppo-5000s-2/colombo'
 
 # net_file = './network/colombo-suburbs.net.xml'
 # route_file = './network/colombo-suburbs.rou.xml'
@@ -37,7 +37,7 @@ out_csv_name='D:/Workspace/Personal/fyp/marl_sumo_simulation/output/marl/ppo-200
 # out_csv_name='outputs/4x4grid/ppo'
 
 wandb.login()
-wandb.tensorboard.patch(root_logdir="./ray_results")
+wandb.tensorboard.patch(root_logdir="D:/Workspace/Personal/fyp/marl_sumo_simulation/ray_results")
 
 wandb.init(
     project="sumo_petting_zoo_rllib",
@@ -80,16 +80,15 @@ agents = [a for a in env_pz.get_agent_ids()]
 config = (
         PPOConfig()
         .environment(env="SumoEnv")
-        .rollouts(num_rollout_workers=4, rollout_fragment_length=128)
+        .rollouts(num_rollout_workers=4, rollout_fragment_length=512)
         .evaluation(
-            evaluation_interval=10,
+            evaluation_interval=4,
             evaluation_duration_unit='episodes',
-            evaluation_duration=2,
-            evaluation_parallel_to_training=True,
-            evaluation_num_workers=2
+            evaluation_duration=1,
+            evaluation_parallel_to_training=False
         )
         .training(
-            train_batch_size=512,
+            train_batch_size=2048,
             lr=2e-5,
             gamma=0.95,
             lambda_=0.9,
@@ -116,7 +115,7 @@ results = tune.run(
     "PPO",
     config=config.to_dict(),
     stop={"timesteps_total": 300000},
-    checkpoint_freq=20,
+    checkpoint_freq=10,
     local_dir=ray_results_path,
 )
 

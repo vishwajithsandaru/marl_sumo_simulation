@@ -90,7 +90,7 @@ def calculate_route_accumulated_waiting_time(ts: TrafficSignal, motorbike_weight
 
 def custom_waiting_time_reward(ts: TrafficSignal):
         
-        ts_wait = sum(calculate_route_accumulated_waiting_time(ts, motorbike_weight=3.0)) / 100.0 if key_exists(ts.id) else sum(calculate_custom_accumulated_waiting_time(ts)) / 100.0
+        ts_wait = sum(calculate_route_accumulated_waiting_time(ts, motorbike_weight=3.0)) / 100.0 if key_exists(ts.id) else sum(calculate_custom_accumulated_waiting_time(ts, motorbike_weight=3.0)) / 100.0
         # print("Last Measure: ", ts.last_measure)
         # print("TS Wait: ", ts_wait)
         reward = ts.last_measure - ts_wait
